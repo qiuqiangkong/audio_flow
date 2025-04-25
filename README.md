@@ -119,7 +119,7 @@ Here are the results of training audio generation systems with a single RTX 4090
 
 | Tasks                   | Condition    | Generated audio | Ground truth |
 |-------------------------|--------------|-----------------|--------------|
-| Text to music           | "blues"      | <video src=https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e> | N.A.         |
+| Text to music           | "blues"      | <video src=https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e autoplay controls></video> | N.A.         |
 
 
 ## Cite
