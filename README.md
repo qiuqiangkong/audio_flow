@@ -120,7 +120,7 @@ Here are the results of training audio generation systems with a single RTX 4090
 | Tasks                   | Condition    | Generated audio | Ground truth |
 |-------------------------|--------------|-----------------|--------------|
 | Text to music           | "blues"      | <video src=https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e autoplay controls></video> | N.A.         |
-| MIDI to music           |       |  |          |
+| MIDI to music           | <video src=https://github.com/user-attachments/assets/866d4431-f946-4a70-81a7-34e5c3cb7488> | <video src=https://github.com/user-attachments/assets/4e01d914-18e3-4186-b912-7ec024e39ef6> | <video src=https://github.com/user-attachments/assets/639e1f3e-1d84-41ec-8866-b6d56ffbf5ef> |
 | Super resolution        |       |  |          |
 | Music source separation |       |  |          |
 
