@@ -42,7 +42,7 @@ class Vocal2Music_Mel(nn.Module):
             }
 
             cond_sources = {
-                "audio": mixture, 
+                "audio": vocals, 
             }
 
             return target, cond_dict, cond_sources
