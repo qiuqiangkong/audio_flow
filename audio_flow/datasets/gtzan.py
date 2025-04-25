@@ -1,3 +1,4 @@
+r"""Code from: https://github.com/AudioFans/audidata/blob/main/audidata/datasets/gtzan.py"""
 from __future__ import annotations
 
 import os

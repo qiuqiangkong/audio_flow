@@ -1,3 +1,4 @@
+r"""Copied from https://github.com/AudioFans/audidata/blob/main/audidata/datasets/maestro.py"""
 from __future__ import annotations
 
 from pathlib import Path

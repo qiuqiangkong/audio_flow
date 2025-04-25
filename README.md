@@ -2,15 +2,15 @@
 
 This repository contains a PyTorch implementation of audio generation with flow matching. Any modality signals, including text, audio, MIDI, image, video can be converted to audio by using conditional flow matching. The following figure shows the framework.
 
-| Tasks                   | Supported    | Dataset    | Config yaml |
-|-------------------------|--------------|------------|-------------|
-| Text to music           | ✅           | GTZAN      | [configs/text2music.yaml](configs/text2music.yaml) |
-| MIDI to music           | ✅           | MAESTRO    |
-| Codec to music          | ✅           | MUSDB18HQ  |
-| Mono to stereo          | ✅           | MUSDB18HQ  |
-| Super resolution        | ✅           | MUSDB18HQ  |
-| Music source separation | ✅           | MUSDB18HQ  |
-| Vocal to music          | ✅           | MUSDB18HQ  |
+| Tasks                   | Supported    | Dataset    | Config yaml                                                  |
+|-------------------------|--------------|------------|--------------------------------------------------------------|
+| Text to music           | ✅           | GTZAN      | [configs/text2music.yaml](configs/text2music.yaml)           |
+| MIDI to music           | ✅           | MAESTRO    | [configs/midi2music.yaml](configs/midi2music.yaml)           |
+| Codec to audio          | ✅           | MUSDB18HQ  | [configs/codec2audio.yaml](configs/codec2audio.yaml)         |
+| Mono to stereo          | ✅           | MUSDB18HQ  | [configs/mono2stereo.yaml](configs/mono2stereo.yaml)         |
+| Super resolution        | ✅           | MUSDB18HQ  | [configs/superresolution.yaml](configs/superresolution.yaml) |
+| Music source separation | ✅           | MUSDB18HQ  | [configs/mss.yaml](configs/mss.yaml)                         |
+| Vocal to music          | ✅           | MUSDB18HQ  | [configs/vocal2music.yaml](configs/vocal2music.yaml)         |
 
 
 ## 0. Install dependencies
@@ -30,15 +30,35 @@ conda activate audio_flow
 bash env.sh
 ```
 
+## 1. Download datasets
+
+Download the dataset corresponding to the task. 
+
+GTZAN (1.3 GB, 8 hours):
+
+```bash
+bash ./scripts/download_gtzan.sh
+```
+
+MUSDB18HQ (30 GB, 10 hours):
+
+```bash
+bash ./scripts/download_musdb18hq.sh
+```
+
+MAESTRO (131 GB, 200 hours):
+
+```bash
+bash ./scripts/download_musdb18hq.sh
+```
+
 ## 1. Text to music
 
 ### 1.1 Download dataset
 
 Users need to do download the GTZAN dataset (1.3 GB, 8 hours).
 
-```bash
-bash ./scripts/download_gtzan.sh
-```
+
 
 The downloaded dataset after compression looks like:
 
