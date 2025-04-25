@@ -1,4 +1,6 @@
 
+https://github.com/user-attachments/assets/4a7e0929-e62d-49d5-8d0d-cbe9734a0555
+
 https://github.com/user-attachments/assets/a3ea9a31-a6a3-4497-a43a-1577c9f9d1d8
 
 https://github.com/user-attachments/assets/fbc48904-1738-4cf2-bf8e-fea0aae441e6
@@ -128,7 +130,8 @@ Here are the results of training audio generation systems with a single RTX 4090
 | Text to music           | "blues"      | <video src=https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e autoplay controls></video> | N.A.         |
 | MIDI to music           | <video src=https://github.com/user-attachments/assets/81ce572a-f0da-4b69-bdd3-5be9d0c3e4d5> | <video src=https://github.com/user-attachments/assets/5f21234e-dc02-4b2a-b0f2-43d9d24d5775> | <video src=https://github.com/user-attachments/assets/6cecccd7-31f7-43da-a601-9cfc4e7e617f> |
 | Super resolution        | <video src=https://github.com/user-attachments/assets/47d4428f-cdb5-400a-9257-15679f4de86f> | <video src=https://github.com/user-attachments/assets/13021a63-7530-49b7-b897-09a3bd004b10> | <video src=https://github.com/user-attachments/assets/b8330d99-2b58-4c98-b66e-ef2f265fe6ad> |
-| Music source separation | <video src=Uploading mixture.mp4…> | <video src=Uploading generated.mp4…> | <video src=Uploading ground_truth.mp4…> |
+| Music source separation | <video src=https://github.com/user-attachments/assets/26a37757-ea88-4ab6-bab4-6dd3d1ac716c> | <video src=
+https://github.com/user-attachments/assets/d3022759-7f70-4abb-93c4-decd34438d31> | <video src=https://github.com/user-attachments/assets/45e32fb7-7210-4399-9079-be4991498ede> |
 
 
 ## Cite
