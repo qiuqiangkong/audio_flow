@@ -130,12 +130,11 @@ Here are the results of training audio generation systems with a single RTX 4090
 
 ## Cite
 
-<pre>bibtex
+```bibtex
 @misc{audioflow2025,
   author       = {Qiuqiang Kong},
   title        = {AudioFlow},
   year         = {2025},
   howpublished = {\url{https://github.com/qiuqiangkong/audio_flow}},
 }
-
-</pre>
+```
