@@ -4,12 +4,12 @@ clip_duration: 2.
 
 train_datasets:
     MAESTRO:
-        root: "/datasets/maestro-v3.0.0"
+        root: "./datasets/maestro-v3.0.0"
         split: "train"
 
 test_datasets:
     MAESTRO:
-        root: "/datasets/maestro-v3.0.0"
+        root: "./datasets/maestro-v3.0.0"
         split: "test"
 
 sampler: InfiniteSampler

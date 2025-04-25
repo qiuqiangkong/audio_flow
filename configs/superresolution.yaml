@@ -4,13 +4,13 @@ clip_duration: 2.
 
 train_datasets:
     MUSDB18HQ:
-        root: "/datasets/musdb18hq"
+        root: "./datasets/musdb18hq"
         split: "train"
         time_align: strict
 
 test_datasets:
     MUSDB18HQ:
-        root: "/datasets/musdb18hq"
+        root: "./datasets/musdb18hq"
         split: "test"
         time_align: strict
 

@@ -4,12 +4,12 @@ clip_duration: 5.
 
 train_datasets:
     GTZAN:
-        root: "/datasets/gtzan"
+        root: "./datasets/gtzan"
         split: "train"
         
 test_datasets:
     GTZAN:
-        root: "/datasets/gtzan"
+        root: "./datasets/gtzan"
         split: "test"
         
 sampler: InfiniteSampler
