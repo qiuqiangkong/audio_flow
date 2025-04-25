@@ -1,6 +1,16 @@
 # Audio Generation with Flow Matching
 
-This repository contains a PyTorch implementation of audio generation with flow matching. Examples includes text-to-music, audio super-resolution, music source separation, etc.
+This repository contains a PyTorch implementation of audio generation with flow matching. Any modality signals, including text, audio, MIDI, image, video can be converted to audio by using conditional flow matching. The following figure shows the framework.
+
+| Tasks                   | Supported    | Dataset    |
+|-------------------------|--------------|------------|
+| Text to music           | ✅           | GTZAN      |
+| MIDI to music           | ✅           | MAESTRO    |
+| Codec to music          | ✅           | MUSDB18HQ  |
+| Mono to stereo          | ✅           | MUSDB18HQ  |
+| Super resolution        | ✅           | MUSDB18HQ  |
+| Music source separation | ✅           | MUSDB18HQ  |
+| Vocal to music          | ✅           | MUSDB18HQ  |
 
 
 ## 0. Install dependencies
@@ -56,9 +66,9 @@ Takes \~5 hours on 1 RTX4090 to train for 100,000 steps.
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/text2music.yaml"
 ```
 
-
-
-
+```python
+CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 train_accelerate.py --config="./configs/text2music.yaml"
+```
 
 
 
