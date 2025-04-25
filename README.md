@@ -121,7 +121,7 @@ Here are the results of training audio generation systems with a single RTX 4090
 |-------------------------|--------------|-----------------|--------------|
 | Text to music           | "blues"      | 
 
-https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e
+<video src=https://github.com/user-attachments/assets/1a62cb11-fdec-445a-a38c-3f5d9f82748e>
 
            | N.A.         |
 
