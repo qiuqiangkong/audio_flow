@@ -52,15 +52,7 @@ MUSDB18HQ (30 GB, 10 hours):
 bash ./scripts/download_musdb18hq.sh
 ```
 
-The downloaded dataset after compression looks like:
-
-MAESTRO (131 GB, 200 hours):
-
-```bash
-bash ./scripts/download_musdb18hq.sh
-```
-
-To download more datasets please see [scripts](configs).
+To download more datasets please see [scripts](scripts).
 
 ## 2. Train
 
@@ -71,6 +63,8 @@ Here is an example of training a text to music generation system. Users can trai
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/text2music.yaml"
 ```
+
+To run more examples please see [configs](configs).
 
 ### 2.2 Train with multiple GPUs
 
