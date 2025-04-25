@@ -1,4 +1,4 @@
-# Audio Generation with Flow Matching
+# AudioFlow: Audio Generation with Flow Matching
 
 This repository contains a PyTorch implementation of audio generation with flow matching. Any modality signals, including text, audio, MIDI, image, video can be converted to audio by using conditional flow matching. The following figure shows the framework.
 
