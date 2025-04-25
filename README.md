@@ -117,15 +117,9 @@ Here are the results of training audio generation systems with a single RTX 4090
 
 ## Results
 
-| Tasks                   | Supported    | Dataset    | Config yaml                                                  |
-|-------------------------|--------------|------------|--------------------------------------------------------------|
-| Text to music           | ✅           | GTZAN      | [configs/text2music.yaml](configs/text2music.yaml)           |
-| MIDI to music           | ✅           | MAESTRO    | [configs/midi2music.yaml](configs/midi2music.yaml)           |
-| Codec to audio          | ✅           | MUSDB18HQ  | [configs/codec2audio.yaml](configs/codec2audio.yaml)         |
-| Mono to stereo          | ✅           | MUSDB18HQ  | [configs/mono2stereo.yaml](configs/mono2stereo.yaml)         |
-| Super resolution        | ✅           | MUSDB18HQ  | [configs/superresolution.yaml](configs/superresolution.yaml) |
-| Music source separation | ✅           | MUSDB18HQ  | [configs/mss.yaml](configs/mss.yaml)                         |
-| Vocal to music          | ✅           | MUSDB18HQ  | [configs/vocal2music.yaml](configs/vocal2music.yaml)         |
+| Tasks                   | Condition    | Generated audio | Ground truth |
+|-------------------------|--------------|-----------------|--------------|
+| Text to music           | "blues"      | GTZAN           | N.A.         |
 
 
 ## Cite
