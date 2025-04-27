@@ -1,6 +1,6 @@
 # AudioFlow: Audio Generation with Flow Matching
 
-This repository contains tutorial of audio generation with flow matching implemented with PyTorch. Any modality signals, including text, audio, MIDI, image, video can be converted to audio by using conditional flow matching. The following figure shows the framework.
+This repository contains a tutorial on audio generation using conditional flow matching implemented in PyTorch. Signals from any modality, including text, audio, MIDI, images, and video, can be converted to audio using conditional flow matching. The figure below shows the framework.
 
 ![Framework](./assets/framework.png)
 
@@ -76,7 +76,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 tra
 
 ## Results
 
-Here are the results of training audio generation systems with a single RTX 4090 GPU card for 12 hours for 200k steps.
+Here are the results after training with a single RTX 4090 GPU for 12 hours (200k steps). Users can achieve better performance with longer training times.
 
 ## Results
 
