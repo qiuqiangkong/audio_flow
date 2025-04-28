@@ -21,6 +21,12 @@ def modulate(x: Tensor, shift: Tensor, scale: Tensor) -> Tensor:
 
 
 class Block(nn.Module):
+    r"""Self attention block.
+
+    Ref: 
+        [1] https://github.com/facebookresearch/DiT/blob/main/models.py
+        [2] https://huggingface.co/hpcai-tech/OpenSora-STDiT-v1-HQ-16x256x256/blob/main/layers.py
+    """
     def __init__(self, config) -> None:
         super().__init__()
         self.att_norm = RMSNorm(config.n_embd)
@@ -42,10 +48,6 @@ class Block(nn.Module):
     ) -> torch.Tensor:
         r"""Self attention block.
 
-        Ref: 
-        [1] https://github.com/facebookresearch/DiT/blob/main/models.py
-        [2] https://huggingface.co/hpcai-tech/OpenSora-STDiT-v1-HQ-16x256x256/blob/main/layers.py
-
         Args:
             x: (b, t, d)
             rope: (t, head_dim/2, 2)
@@ -59,11 +61,11 @@ class Block(nn.Module):
         shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = \
             self.adaLN_modulation(emb).chunk(6, dim=2)  # 6 x (b, t, d)
 
-        x = modulate(self.att_norm(x), shift_msa, scale_msa)  # (b, t, d)
-        x = x + gate_msa * self.att(x, rope, mask)  # (b, t, d)
-
-        x = modulate(self.ffn_norm(x), shift_mlp, scale_mlp)  # (b, t, d)
-        x = x + gate_mlp * self.mlp(x)  # (b, t, d)
+        h = modulate(self.att_norm(x), shift_msa, scale_msa)  # (b, t, d)
+        x = x + gate_msa * self.att(h, rope, mask)  # (b, t, d)
+        
+        h = modulate(self.ffn_norm(x), shift_mlp, scale_mlp)  # (b, t, d)
+        x = x + gate_mlp * self.mlp(h)  # (b, t, d)
 
         return x
 

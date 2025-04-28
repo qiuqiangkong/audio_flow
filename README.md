@@ -76,7 +76,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 tra
 
 ## Results
 
-Here are the results after training with a single RTX 4090 GPU for 12 hours (200k steps). Users can achieve better performance with longer training times.
+Here are the results after training with a single RTX 4090 GPU for 20 hours (200k steps). Users can achieve better performance with longer training times.
 
 ## Results
 
