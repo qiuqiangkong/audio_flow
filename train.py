@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import argparse
 from copy import deepcopy
 from pathlib import Path
@@ -178,7 +181,7 @@ def get_data_transform(configs: dict):
             SuperResolution_Mel
         return SuperResolution_Mel(
             sr=configs["sample_rate"], 
-            distorted_sr=configs["data_transform"]["distorted_sample_rate"]
+            trainable = False
         )
 
     elif name == "Mono2Stereo_Mel":
@@ -202,6 +205,10 @@ def get_data_transform(configs: dict):
 
     elif name == "Phase_STFT":
         pass
+
+    elif name == "Whisper2Speech":
+        from audio_flow.data_transforms.whisper2speech import Whisper2Speech
+        return Whisper2Speech( sr=configs["sample_rate"],trainable=False )
 
     else:
         raise ValueError(name)
@@ -282,6 +289,27 @@ def get_dataset(
                 load_target=True,
                 extend_pedal=True,
                 target_transform=PianoRoll(fps=100, pitches_num=128),
+            )
+            return dataset
+        
+        elif name == "LibriSpeech":
+
+            from audidata.io.crops import RandomCrop, StartCrop
+            from audidata.transforms.midi import PianoRoll
+            from audio_flow.datasets.librispeech import LibriSpeech
+            from audio_flow.update_collate import default_collate_fn_map  # Change global variable
+
+            if mode == "train":
+                crop = RandomCrop(clip_duration=clip_duration)
+            elif mode == "test":
+                crop = StartCrop(start=0., clip_duration=clip_duration)
+
+            dataset = LibriSpeech(
+                root=configs[ds][name]["root"],
+                split=configs[ds][name]["split"],
+                sr=sr,
+                crop=crop,
+                transform=None,
             )
             return dataset
 
