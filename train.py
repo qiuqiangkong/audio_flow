@@ -181,7 +181,7 @@ def get_data_transform(configs: dict):
             SuperResolution_Mel
         return SuperResolution_Mel(
             sr=configs["sample_rate"], 
-            trainable = False
+            distorted_sr=configs["data_transform"]["distorted_sample_rate"]
         )
 
     elif name == "Mono2Stereo_Mel":
