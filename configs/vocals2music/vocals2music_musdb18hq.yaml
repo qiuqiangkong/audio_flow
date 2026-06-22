@@ -2,35 +2,36 @@
 clip_duration: 10.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
+  - path: "./jsonls/vocals2music/train/musdb18hq.jsonl" 
     weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
+  - path: "./jsonls/vocals2music/train/musdb18hq.jsonl"
     weight: 1.0
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
+    path: "./jsonls/vocals2music/train/musdb18hq.jsonl"
     num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
+    path: "./jsonls/vocals2music/test/musdb18hq.jsonl"
     num: 10
 
 sampler: 
     name: BatchJsonlSampler
 
 dataset: 
-    name: TTMDataset
+    name: Vocals2MusicDataset
 
 base:
     name: Transformer
-    in_dim: 64
+    in_dim: &in_dim 64
     dim: &dim 768
     num_layers: 12
     num_heads: 24
     rope_len: 8192
 
 adapter:
-    name: TTMAdapter
+    name: Vocals2MusicAdapter
+    in_dim: *in_dim
     dim: *dim
 
 train:

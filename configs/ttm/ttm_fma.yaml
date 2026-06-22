@@ -2,17 +2,19 @@
 clip_duration: 10.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
-    weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
-    weight: 1.0
+  - path: "./jsonls/ttm/train/fma_small.jsonl" 
+    weight: 3660.
+  - path: "./jsonls/ttm/train/fma_medium.jsonl"
+    weight: 9247.
+  - path: "./jsonls/ttm/train/fma_large.jsonl"
+    weight: 19406.
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
+    path: "./jsonls/ttm/train/fma_small.jsonl"
     num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
+    path: "./jsonls/ttm/test/fma_small.jsonl"
     num: 10
 
 sampler: 

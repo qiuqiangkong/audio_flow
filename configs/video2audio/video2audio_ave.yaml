@@ -1,36 +1,37 @@
 ---
-clip_duration: 10.
+clip_duration: 8.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
+  - path: "./jsonls/video2audio/train/ave.jsonl" 
     weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
+  - path: "./jsonls/video2audio/train/ave.jsonl"
     weight: 1.0
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
+    path: "./jsonls/video2audio/train/ave.jsonl"
     num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
+    path: "./jsonls/video2audio/test/ave.jsonl"
     num: 10
 
 sampler: 
     name: BatchJsonlSampler
 
 dataset: 
-    name: TTMDataset
+    name: Video2AudioDataset
 
 base:
     name: Transformer
-    in_dim: 64
+    in_dim: &in_dim 64
     dim: &dim 768
     num_layers: 12
     num_heads: 24
     rope_len: 8192
 
 adapter:
-    name: TTMAdapter
+    name: Video2AudioAdapter
+    in_dim: 512
     dim: *dim
 
 train:

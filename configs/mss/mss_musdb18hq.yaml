@@ -2,35 +2,44 @@
 clip_duration: 10.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
+  - path: "./jsonls/mss/train/aatc.jsonl" 
     weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
+  - path: "./jsonls/mss/train/aatc.jsonl"
     weight: 1.0
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
+    path: "./jsonls/mss/train/aatc.jsonl"
     num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
+    path: "./jsonls/mss/valid/aatc.jsonl"
     num: 10
 
 sampler: 
     name: BatchJsonlSampler
 
 dataset: 
-    name: TTMDataset
+    name: MSSDataset
+
+validate:
+    vae: mmaudio_vae
+
+
+# latent:
+#     name: "levo_vae"
+#     in_dim: &in_dim 64
 
 base:
     name: Transformer
-    in_dim: 64
+    in_dim: &in_dim 20
     dim: &dim 768
     num_layers: 12
     num_heads: 24
     rope_len: 8192
 
 adapter:
-    name: TTMAdapter
+    name: MSSAdapter
+    in_dim: *in_dim
     dim: *dim
 
 train:

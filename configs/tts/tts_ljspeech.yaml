@@ -2,24 +2,22 @@
 clip_duration: 10.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
-    weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
+  - path: "./jsonls/tts/train/ljspeech.jsonl"
     weight: 1.0
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
-    num: 10
+  path: "./jsonls/tts/train/ljspeech.jsonl"
+  num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
-    num: 10
+  path: "./jsonls/tts/test/ljspeech.jsonl"
+  num: 10
 
 sampler: 
     name: BatchJsonlSampler
 
 dataset: 
-    name: TTMDataset
+    name: TTSDataset
 
 base:
     name: Transformer
@@ -30,12 +28,13 @@ base:
     rope_len: 8192
 
 adapter:
-    name: TTMAdapter
+    name: TTSAdapter
     dim: *dim
 
 train:
     device: cuda
-    num_workers: 16
+    # num_workers: 16
+    num_workers: 0
     precision: "no"  # "no" (fp32) | "bf16"
     optimizer: AdamW
     lr: 1e-4

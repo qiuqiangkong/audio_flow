@@ -1,0 +1,120 @@
+---
+clip_duration: 30.
+
+train_jsonls:
+  - path: "./jsonls/tts/train/libritts_train-clean-100/0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-100/10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-100/20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-100/30000-33235.jsonl"
+    weight: 0.3236
+
+  - path: "./jsonls/tts/train/libritts_train-clean-360/0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/30000-40000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/40000-50000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/50000-60000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/60000-70000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/70000-80000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/80000-90000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/90000-100000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/100000-110000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-clean-360/110000-116488.jsonl"
+    weight: 0.6489
+
+  - path: "./jsonls/tts/train/libritts_train-other-500/0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/30000-40000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/40000-50000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/50000-60000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/60000-70000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/70000-80000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/80000-90000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/90000-100000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/100000-110000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/110000-120000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/120000-130000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/130000-140000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/140000-150000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/150000-160000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/160000-170000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/170000-180000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/180000-190000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/190000-200000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train/libritts_train-other-500/200000-205027.jsonl"
+    weight: 0.5028
+  
+
+validate_train_jsonl:
+    path: "./jsonls/tts/train/libritts_train-clean-100.jsonl"
+    num: 10
+
+validate_test_jsonl:
+    path: "./jsonls/tts/test/libritts_test-clean.jsonl"
+    num: 10
+
+sampler: 
+    name: BatchJsonlSampler
+
+dataset: 
+    name: TTSDataset
+
+base:
+    name: Transformer
+    in_dim: 64
+    dim: &dim 768
+    num_layers: 12
+    num_heads: 24
+    rope_len: 8192
+
+adapter:
+    name: TTSAdapter
+    dim: *dim
+
+train:
+    device: cuda
+    num_workers: 16
+    precision: "no"  # "no" (fp32) | "bf16"
+    optimizer: AdamW
+    lr: 1e-4
+    warm_up_steps: 1000  # Leave blank if no warm up is used
+    batch_size_per_device: 8
+    test_every_n_steps: 10000
+    save_every_n_steps: 100000
+    training_steps: 2000000
+    resume_ckpt_path:  # Leave blank if train from scratch

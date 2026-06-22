@@ -2,40 +2,42 @@
 clip_duration: 10.
 
 train_jsonls:
-  - path: "./jsonls/ttm/train/gtzan.jsonl" 
+  - path: "./jsonls/midi2audio/train/maestro-v3.0.0.jsonl" 
     weight: 1.0
-  - path: "./jsonls/ttm/train/gtzan.jsonl"
+  - path: "./jsonls/midi2audio/train/maestro-v3.0.0.jsonl"
     weight: 1.0
 
 validate_train_jsonl:
-    path: "./jsonls/ttm/train/gtzan.jsonl"
+    path: "./jsonls/midi2audio/train/maestro-v3.0.0.jsonl"
     num: 10
 
 validate_test_jsonl:
-    path: "./jsonls/ttm/test/gtzan.jsonl"
+    path: "./jsonls/midi2audio/test/maestro-v3.0.0.jsonl"
     num: 10
 
 sampler: 
     name: BatchJsonlSampler
 
 dataset: 
-    name: TTMDataset
+    name: Midi2AudioDataset
 
 base:
     name: Transformer
-    in_dim: 64
+    in_dim: &in_dim 64
     dim: &dim 768
     num_layers: 12
     num_heads: 24
     rope_len: 8192
 
 adapter:
-    name: TTMAdapter
+    name: Midi2AudioAdapter
+    in_dim: 256
     dim: *dim
 
 train:
     device: cuda
     num_workers: 16
+    # num_workers: 0
     precision: "no"  # "no" (fp32) | "bf16"
     optimizer: AdamW
     lr: 1e-4
