@@ -101,5 +101,5 @@ def quantize_time(t: float, fps: float) -> float:
     return int(t * fps) / fps
 
 
-def sample_grid_start_time(total_duration: float, clip_duration: float, fps: float) -> float:
+def sample_aligned_start_time(total_duration: float, clip_duration: float, fps: float) -> float:
     return quantize_time(sample_start_time(total_duration, clip_duration), fps)

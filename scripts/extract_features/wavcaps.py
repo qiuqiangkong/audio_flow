@@ -1,12 +1,13 @@
 import argparse
 from pathlib import Path
 
-import pandas as pd
+# import pandas as pd
 
 from audioflow.encoders.audio import load_encoder
 from audioflow.utils.audio import extract_and_save_audio_features, load_stereo
 from audioflow.utils.misc import augment_path
 from audioflow.utils.text import write_lines
+from audioflow.utils.json import read_jsonl
 
 
 def extract_audio_features(args) -> None:
@@ -44,43 +45,24 @@ def extract_audio_features(args) -> None:
 def extract_texts(args) -> None:
 
     # Arguments
-    root = Path(args.dataset_root)
-    audios_dir = Path(args.audios_dir)
+    json_path = Path(args.json_path)
     out_dir = Path(args.out_dir)
     
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # Audio names
-    audio_names = set([path.stem for path in audios_dir.glob("*.wav")])
-
-    # Caption names
-    meta_csv = root / "AudioSetCaps_caption.csv"
-    meta_dict = load_meta(meta_csv)
-    n_data = len(meta_dict["name"])
-    cnt = 0
+    data = read_jsonl(json_path)
+    data = data[0]["data"]
+    n_data = len(data)
 
     for n in range(n_data):
-        name = meta_dict["name"][n]
-        caption = meta_dict["caption"][n]
+        name = Path(data[n]["id"])
+        caption = data[n]["caption"]
+        out_path = out_dir / f"{name.stem}.txt"
+        
+        write_lines(out_path, [caption])
+        print(f"Write out to {out_path}")
 
-        if name in audio_names:
-            out_path = out_dir / f"{name}.txt"
-            write_lines(out_path, [caption])
-            print(f"Write out to {out_path}")
-            cnt += 1
-
-    print(f"Total: {cnt}")
-
-
-def load_meta(meta_csv) -> dict:
-    df = pd.read_csv(meta_csv, sep=',')
-    meta_dict = {"name": [], "caption": []}
-
-    meta_dict = {
-        "name": df["id"].values,
-        "caption": df["caption"].values   
-    }
-    return meta_dict
+    print(f"Total: {n_data}")
 
 
 if __name__ == '__main__':
@@ -96,8 +78,7 @@ if __name__ == '__main__':
     parser_audio.add_argument("--out_dir", type=str, required=True)
 
     parser_text = subparsers.add_parser("text")
-    parser_text.add_argument("--dataset_root", type=str, required=True)
-    parser_text.add_argument("--audios_dir", type=str, required=True)
+    parser_text.add_argument("--json_path", type=str, required=True)
     parser_text.add_argument("--out_dir", type=str, required=True)
 
     args = parser.parse_args()

@@ -81,9 +81,9 @@ class Validator:
                     logmel_gt = logmel(audio_gt, self.decoder.sr)
 
                     fig, axs = plt.subplots(3, 1, figsize=(10, 10))
-                    self.plot_logmel(axs[0], logmel_in.T)
-                    self.plot_logmel(axs[1], logmel_gen.T)
-                    self.plot_logmel(axs[2], logmel_gt.T)
+                    self.plot_logmel(axs[0], logmel_in)
+                    self.plot_logmel(axs[1], logmel_gen)
+                    self.plot_logmel(axs[2], logmel_gt)
                     axs[0].set_title("Input")
                     axs[1].set_title("Generation")
                     axs[2].set_title("Ground truth")
@@ -105,7 +105,7 @@ class Validator:
     def plot_logmel(self, ax, x):
         vmin, vmax = -10, 5
         if x is not None:
-            ax.matshow(x, origin='lower', aspect='auto', cmap='jet', vmin=vmin, vmax=vmax)
+            ax.matshow(x.T, origin='lower', aspect='auto', cmap='jet', vmin=vmin, vmax=vmax)
 
     def write_audio(self, audio: np.ndarray, path: str) -> None:
         if audio is not None:
