@@ -47,6 +47,7 @@ def sample(args) -> None:
     noise = torch.randn(1, length, vae.dim).to(device)  # (b, l, d)
     
     assert check_prompt(prompt), f"Format error! {prompt}"
+    
     data = get_data(prompt, length)
     data = default_collate([data])
 
