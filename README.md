@@ -90,11 +90,12 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/mss/mss_musdb18hq.yam
 ```
 
 ### 1.5 Sample
+The pretrained checkpoint can be downloaded from the GitHub Release page: [Download checkpoint](https://github.com/fliu215/audioflow/releases/download/ckpt-v1/step.1000000_ema.pth)
 ```python
 # Single
 CUDA_VISIBLE_DEVICES=0 python sample.py \
     --config="./configs/mss/mss_musdb18hq.yaml" \
-    --ckpt_path="checkpoints/train/mss_musdb18hq/step=200000_ema.pth" \
+    --ckpt_path="checkpoints/train/mss_musdb18hq/step=1000000_ema.pth" \
     --task="music source separation" \
     --duration=10 \
     --input_path="./assets/music_10s.wav" \
@@ -102,7 +103,7 @@ CUDA_VISIBLE_DEVICES=0 python sample.py \
 # Batch
 CUDA_VISIBLE_DEVICES=0 python batch_sample_chunked.py \
   --config "./configs/mss/mss_musdb18hq.yaml" \
-  --ckpt_path "checkpoints/train/mss_musdb18hq/step=200000_ema.pth" \
+  --ckpt_path "checkpoints/train/mss_musdb18hq/step=1000000_ema.pth" \
   --dataset_root "datasets/test" \
   --input_filename "phone" \
   --out_dir "batch_results" \
@@ -113,8 +114,22 @@ CUDA_VISIBLE_DEVICES=0 python batch_sample_chunked.py \
   --skip_existing
 ```
 
+### 1.6 Evaluate
+```
+python evaluate_mss_metrics.py --compute_fad --compute_visqol --compute_input_metrics
+```
+
+The validation results of the baseline system are shown below.
+
+| Method | SI-SNR (dB) ↑ | LSD ↓ | FAD ↓ | ViSQOL ↑ |
+|:---:|:---:|:---:|:---:|:---:|
+| Input | -46.91 | 1.91 | 22.70 | 3.37 |
+| Baseline | -50.50 | 1.71 | 8.90 | 3.45 |
+
 ## External links
 
 [1] Conditional flow matching: https://github.com/atong01/conditional-flow-matching
 
 [2] DiT: https://github.com/facebookresearch/DiT
+
+[3] Contributor: https://fliu215.github.io/homepage/
