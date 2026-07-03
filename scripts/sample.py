@@ -12,7 +12,7 @@ from audioflow.decoders.audio import load_decoder
 from audioflow.utils.yaml import read_yaml
 from audioflow.utils.misc import check_prompt
 from audioflow.solvers import get_solver
-from audioflow.inference.generate import generate_latent
+from audioflow.inference.sampler import sample_latent
 from audioflow.models import get_model
 
 
@@ -51,7 +51,7 @@ def sample(args) -> None:
     data = get_data(prompt, length)
     data = default_collate([data])
 
-    x_gen = generate_latent(model, noise, data, solver, cfg_scale)  # (b, l, d)
+    x_gen = sample_latent(model, noise, data, solver, cfg_scale)  # (b, l, d)
     
     # Decode audio from VAE latents
     audio_gen = vae.decode(x_gen).data.cpu().numpy()[0]  # (c, l)
@@ -78,7 +78,6 @@ if __name__ == "__main__":
     parser.add_argument("--out_path", type=str, required=True)
 
     parser.add_argument("--duration", type=float, default=10.)
-    # parser.add_argument("--input_path", type=str)
     
     args = parser.parse_args()
 

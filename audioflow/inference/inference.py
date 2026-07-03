@@ -10,7 +10,7 @@ from audioflow.utils.torch import to_device
 
 
 @torch.inference_mode()
-def generate_latent(
+def sample_latent(
     model: nn.Module, 
     noise: Tensor, 
     data: dict, 

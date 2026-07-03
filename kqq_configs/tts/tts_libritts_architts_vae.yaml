@@ -1,0 +1,156 @@
+---
+train_jsonls:
+  - path: "./jsonls/tts/train-clean-100/libritts_architts_vae_0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-100/libritts_architts_vae_10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-100/libritts_architts_vae_20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-100/libritts_architts_vae_30000-33225.jsonl"
+    weight: 1.0
+
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_30000-40000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_40000-50000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_50000-60000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_60000-70000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_70000-80000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_80000-90000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_90000-100000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_100000-110000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-clean-360/libritts_architts_vae_110000-116460.jsonl"
+    weight: 1.0
+
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_0-10000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_10000-20000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_20000-30000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_30000-40000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_40000-50000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_50000-60000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_60000-70000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_70000-80000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_80000-90000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_90000-100000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_100000-110000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_110000-120000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_120000-130000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_130000-140000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_140000-150000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_150000-160000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_160000-170000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_170000-180000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_180000-190000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_190000-200000.jsonl"
+    weight: 1.0
+  - path: "./jsonls/tts/train-other-500/libritts_architts_vae_200000-204980.jsonl"
+    weight: 1.0
+  
+validate:
+    decode_to_audio: true
+
+    train:
+      - path: "./jsonls/tts/train-clean-100/libritts_architts_vae_10000-20000.jsonl"
+        num: 10
+    test:
+      - path: "./jsonls/tts/test-clean/libritts_architts_vae.jsonl"
+        num: 10
+
+sampler: 
+    name: BatchJsonlSampler
+
+dataset: 
+    name: TTSDataset
+    crop_duration: 30.
+
+vae: 
+    name: "architts_vae"
+    latent_dim: &latent_dim 64
+
+model:
+    dim: &dim 768
+
+    adapter:
+        name: TTSAdapter
+        dim: *dim
+
+    in:
+        in_dim: *latent_dim
+        dim: *dim
+
+    base:
+        name: Transformer
+        dim: *dim
+        num_layers: 12
+        num_heads: 24
+        rope_len: 8192
+
+    out:
+        dim: *dim
+        out_dim: *latent_dim
+
+flow:
+    matcher: 
+        name: "linear"
+    
+    t_schedule:
+        name: "logitnormal"  # "uniform" | "logitnormal"
+        mu: -0.8
+        sigma: 0.8
+
+cfg:
+    train:
+        p_full: 0.1
+        p_partial: 0.1
+
+    sample:
+        scale: 4.0
+
+train:
+    device: cuda
+    num_workers: 16
+    precision: "no"  # "no" (fp32) | "bf16"
+    optimizer:
+        name: AdamW
+        lr: 1e-4
+        warmup_steps: 1000  # Leave blank if no warm up is used
+    batch_size_per_device: 8
+    test_every_n_steps: 10000
+    save_every_n_steps: 100000
+    training_steps: 2000000
+    resume_ckpt_path:  # Leave blank if train from scratch
+
+solver:
+    name: "euler"
+    steps: 100

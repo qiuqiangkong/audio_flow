@@ -1,0 +1,47 @@
+{
+    "input": {
+        "text": {
+            "speech": {
+                "content": "hello world!",
+                "language": "en",
+                "emotion": "angry",
+            },
+            "music": {
+                "caption": label,
+                "genre": "jazz",
+                "bpm": 80,
+                "instruments": ["piano", "vocals", "bass"],
+                "mood": "warm and melancholic",
+                "mixing": "studio recording, close-mic piano, soft room reverb"
+            },
+            "sound": {
+                "caption": "a dog is barking.",
+            },
+        "audio": {
+            "path": "xxx.h5",
+            "type": "levo_vae",
+            "fps": 25,
+            "duration": 10.0
+        }
+        "video": {
+            "path": "yyy.h5",
+            "type": "clip",
+            "fps": 25,
+            "duration": 10.0
+        }
+        "midi": {
+            "path": "yyy.h5",
+            "type": "pianoroll",
+            "fps": 100,
+            "duration": 10.0
+        },
+    },
+    "target":{
+        "audio": {
+            "path": "xxx.h5",
+            "type": "levo_vae",
+            "fps": 25,
+            "duration": 10.0
+        }
+    }
+}

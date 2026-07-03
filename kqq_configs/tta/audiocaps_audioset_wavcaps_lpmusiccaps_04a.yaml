@@ -1,0 +1,181 @@
+---
+train_jsonls:
+  # AudioCaps
+  - path: "./jsonls/tta/train/audiocaps2.0.jsonl" 
+    weight: 91254
+
+  # WavCaps
+  - path: "./jsonls/tta/train/audioset.jsonl" 
+    weight: 2819
+  - path: "./jsonls/tta/train/bbc.jsonl" 
+    weight: 31201
+  - path: "./jsonls/tta/train/fsd.jsonl"
+    weight: 216851
+
+  # LP_Music_Caps
+  - path: "./jsonls/tta/train/lp_music_caps_mc_mmaudio_vae.jsonl" 
+    weight: 10433
+  - path: "./jsonls/tta/train/lp_music_caps_mtt_mmaudio_vae.jsonl" 
+    weight: 62663
+
+  # AudioSet
+  - path: "./jsonls/tta/train/audioset/unbalance_00.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_01.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_02.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_03.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_04.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_05.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_06.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_07.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_08.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_09.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_10.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_11.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_12.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_13.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_14.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_15.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_16.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_17.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_18.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_19.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_20.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_21.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_22.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_23.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_24.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_25.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_26.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_27.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_28.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_29.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_30.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_31.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_32.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_33.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_34.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_35.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_36.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_37.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_38.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_39.jsonl" 
+    weight: 40000
+  - path: "./jsonls/tta/train/audioset/unbalance_40.jsonl" 
+    weight: 40000
+
+validate:
+    decode_to_audio: true
+
+    train:
+      - path: "./jsonls/tta/train/audiocaps2.0.jsonl" 
+        num: 10
+    test:
+      - path: "./jsonls/tta/test/audiocaps2.0.jsonl" 
+        num: 10
+
+sampler: 
+    name: BatchJsonlSampler
+
+dataset: 
+    name: TTADataset
+    crop_duration: 10.
+
+vae: 
+    name: "mmaudio_vae"
+    latent_dim: &latent_dim 20
+
+model:
+    dim: &dim 768
+
+    adapter:
+        name: TTAAdapter
+        dim: *dim
+
+    in:
+        in_dim: *latent_dim
+        dim: *dim
+
+    base:
+        name: Transformer
+        dim: *dim
+        num_layers: 12
+        num_heads: 24
+        rope_len: 8192
+
+    out:
+        dim: *dim
+        out_dim: *latent_dim
+
+flow:
+    matcher: 
+        name: "linear"
+    
+    t_schedule:
+        name: "logitnormal"  # "uniform" | "logitnormal"
+        mu: -0.8
+        sigma: 0.8
+
+cfg:
+    train:
+        p_full: 0.1
+        p_partial: 0.1
+
+    sample:
+        scale: 4.0
+
+train:
+    device: cuda
+    num_workers: 16
+    precision: "no"  # "no" (fp32) | "bf16"
+    optimizer:
+        name: AdamW
+        lr: 1e-4
+        warmup_steps: 1000  # Leave blank if no warm up is used
+    batch_size_per_device: 8
+    test_every_n_steps: 10000
+    save_every_n_steps: 100000
+    training_steps: 2000000
+    resume_ckpt_path:  # Leave blank if train from scratch
+
+solver:
+    name: "euler"
+    steps: 100

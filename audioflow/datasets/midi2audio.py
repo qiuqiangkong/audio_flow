@@ -1,6 +1,6 @@
 import numpy as np
 
-from audioflow.utils.misc import sample_grid_start_time, load_data_by_time
+from audioflow.utils.misc import sample_aligned_start_time, load_data_by_time
 
 
 class Midi2AudioDataset:
@@ -21,7 +21,7 @@ class Midi2AudioDataset:
         if "start_time" in meta:
             start = meta["start_time"]
         else:
-            start = sample_grid_start_time(dur, self.clip_dur, tgt_fps)
+            start = sample_aligned_start_time(dur, self.clip_dur, tgt_fps)
             
         in_feature, in_mask = load_data_by_time(in_path, start, self.clip_dur, in_fps)
         tgt_latent, tgt_mask = load_data_by_time(tgt_path, start, self.clip_dur, tgt_fps)

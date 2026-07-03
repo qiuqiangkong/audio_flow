@@ -27,9 +27,9 @@ def cfg_drop(data: dict, p_full=0.1, p_partial=0.1) -> dict:
             s = drop_xml(data["prompt"][n], p)
             update(data, "prompt", n, s)
 
-            if random.random() < p:
-                update(data, "input_feature", n, 0.)
-                update(data, "input_mask", n, False)
+            # if random.random() < p:
+            #     update(data, "input_feature", n, 0.)
+            #     update(data, "input_mask", n, False)
 
         # No drop
         else:

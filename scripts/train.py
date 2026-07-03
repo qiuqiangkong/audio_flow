@@ -12,7 +12,7 @@ import wandb
 from audioflow.datasets import get_dataset
 from audioflow.flows import get_flow
 from audioflow.guidance.cfg import cfg_drop
-from audioflow.inference.validator import Validator
+from audioflow.validate.validator import Validator
 from audioflow.models import get_model
 from audioflow.optim import get_optimizer_and_scheduler
 from audioflow.optim.ema import update_ema

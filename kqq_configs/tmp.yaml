@@ -1,0 +1,82 @@
+---
+train_jsonls:
+  - path: "./jsonls/tta/train/audiocaps2.0.jsonl" 
+    weight: 1.0
+
+validate:
+    decode_to_audio: true
+
+    train:
+      - path: "./jsonls/tta/train/audiocaps2.0.jsonl"
+        num: 10
+    test:
+      - path: "./jsonls/tta/test/audiocaps2.0.jsonl"
+        num: 10
+
+sampler: 
+    name: BatchJsonlSampler
+
+dataset: 
+    name: TTADataset
+    crop_duration: 10.
+
+vae: 
+    name: "mmaudio_vae"
+    latent_dim: &latent_dim 20
+
+model:
+    dim: &dim 768
+
+    adapter:
+        name: TTAAdapter
+        dim: *dim
+
+    in:
+        in_dim: *latent_dim
+        dim: *dim
+
+    base:
+        name: Transformer
+        dim: *dim
+        num_layers: 12
+        num_heads: 24
+        rope_len: 8192
+
+    out:
+        dim: *dim
+        out_dim: *latent_dim
+
+flow:
+    matcher: 
+        name: "linear"
+    
+    t_schedule:
+        name: "logitnormal"  # "uniform" | "logitnormal"
+        mu: -0.8
+        sigma: 0.8
+
+cfg:
+    train:
+        p_full: 0.1
+        p_partial: 0.1
+
+    sample:
+        scale: 4.0
+
+train:
+    device: cuda
+    num_workers: 16
+    precision: "no"  # "no" (fp32) | "bf16"
+    optimizer:
+        name: AdamW
+        lr: 1e-4
+        warmup_steps: 1000  # Leave blank if no warm up is used
+    batch_size_per_device: 8
+    test_every_n_steps: 10000
+    save_every_n_steps: 100000
+    training_steps: 2000000
+    resume_ckpt_path:  # Leave blank if train from scratch
+
+solver:
+    name: "euler"
+    steps: 100
