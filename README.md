@@ -47,9 +47,13 @@ dataset
     ... 
     └── ...
 </pre>
-The `原始.wav` file is the target audio. `phone.wav` is the degraded audio recorded with a mobile phone and requires restoration. `pcm01/02/03.wav` are degraded recordings captured by three microphones. The three microphones are arranged in a linear array, with microphone spacings of 40 mm and 120 mm. The microphone recordings are sampled at 48 kHz, while all other audio files are sampled at 16 kHz. In the baseline setting, `phone.wav` is used as the input audio, and the `原始.wav` file is used as the target.
+The `原始.wav` file is the target audio. `phone.wav` is the degraded audio recorded with a mobile phone and requires restoration. `pcm01/02/03.wav` are degraded recordings captured by three microphones. The three microphones are arranged in a linear array, with microphone spacings of 40 mm and 120 mm. The microphone recordings are sampled at 48 kHz, while all other audio files are sampled at 16 kHz. The microphone recordings can be used as additional training data to augment the dataset. In the baseline setting, `phone.wav` is used as the input audio, and the `原始.wav` file is used as the target.
 
-### 1.2 Pre-extract VAE latents
+### 1.2 Test set
+
+The test set is provided for final evaluation and contains mobile-phone recordings collected under multiple acoustic scenarios. Unlike the training and validation sets, the test set only provides the degraded audio `phone.wav` for each scene. The final evaluation is conducted only on `phone.wav`.
+
+### 1.3 Pre-extract VAE latents
 
 ```bash
 # Mixture
@@ -73,7 +77,7 @@ for SPLIT in "train" "valid"; do
 done
 ```
 
-### 1.3 Prepare JSONL files
+### 1.4 Prepare JSONL files
 
 ```bash
 for SPLIT in "train" "valid"; do
@@ -84,12 +88,12 @@ for SPLIT in "train" "valid"; do
 done
 ```
 
-### 1.4 Train
+### 1.5 Train
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/mss/mss_musdb18hq.yaml"
 ```
 
-### 1.5 Sample
+### 1.6 Sample
 The pretrained checkpoint can be downloaded from the GitHub Release page: [Download checkpoint](https://github.com/fliu215/audioflow/releases/download/ckpt-v1/step.1000000_ema.pth)
 ```python
 # Single
@@ -114,7 +118,7 @@ CUDA_VISIBLE_DEVICES=0 python batch_sample_chunked.py \
   --skip_existing
 ```
 
-### 1.6 Evaluate
+### 1.7 Evaluate
 ```
 python evaluate_mss_metrics.py --compute_fad --compute_visqol --compute_input_metrics
 ```
