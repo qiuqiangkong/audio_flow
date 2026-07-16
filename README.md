@@ -128,9 +128,9 @@ The validation results of the baseline system are shown below.
 | Method | SI-SNR (dB) ↑ | LSD ↓ | FAD ↓ | ViSQOL ↑ | Para. ↓ | MACs ↓
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | Input | -46.91 | 1.91 | 22.70 | 3.37 | - | - |
-| Baseline | -50.50 | 1.71 | 8.90 | 3.45 | 157.38M | 39.02G |
+| Baseline | -50.50 | 1.71 | 8.90 | 3.45 | 550.87M | 4.49T |
 
-Note: The parameter count includes only trainable components and excludes any pretrained modules.
+
 
 ## External links
 
