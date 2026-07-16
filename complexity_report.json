@@ -1,0 +1,71 @@
+{
+  "metric": {
+    "parameters": "all registered parameters, including pretrained/frozen modules",
+    "macs": "ptflops ATen-backend MACs for one complete inference call; fused scaled-dot-product attention and high-level Conv1d operations are covered by custom ptflops rules",
+    "flops": "2 * MACs (one MAC is one multiply-accumulate pair)",
+    "activations": "not reported: ptflops does not expose an activation-count metric"
+  },
+  "input": {
+    "shape": [
+      1,
+      2,
+      160000
+    ],
+    "sample_rate_hz": 16000,
+    "duration_seconds": 10.0,
+    "device": "cpu"
+  },
+  "parameters": {
+    "total": 550866119,
+    "trainable": 267009428,
+    "frozen": 283856691,
+    "by_top_level_component": {
+      "flow_model": 267009428,
+      "vae": 283856691
+    }
+  },
+  "macs": {
+    "total": 4491333431088,
+    "approx_flops": 8982666862176,
+    "counter": "ptflops (backend=aten)"
+  },
+  "components": {
+    "parameters": {
+      "Flow denoiser": 156774164,
+      "Condition adapter (including T5)": 110235264,
+      "MMAudio VAE, decoder and BigVGAN": 283856691
+    },
+    "macs": [
+      {
+        "name": "MMAudio VAE encoder",
+        "macs_per_call": 23582870352,
+        "calls": 1,
+        "macs_total": 23582870352
+      },
+      {
+        "name": "Condition adapter (including T5)",
+        "macs_per_call": 347427840,
+        "calls": 1,
+        "macs_total": 347427840
+      },
+      {
+        "name": "Flow denoiser",
+        "macs_per_call": 39011827296,
+        "calls": 99,
+        "macs_total": 3862170902304
+      },
+      {
+        "name": "MMAudio VAE decoder and BigVGAN vocoder",
+        "macs_per_call": 605232230592,
+        "calls": 1,
+        "macs_total": 605232230592
+      }
+    ]
+  },
+  "sampling": {
+    "solver_grid_points_argument": 100,
+    "actual_denoiser_forward_calls": 99,
+    "profile_mode": "components",
+    "note": "Each unique baseline component was measured with PTFLops. The single denoiser measurement was multiplied by the number of Euler model evaluations."
+  }
+}
