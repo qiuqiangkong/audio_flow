@@ -8,6 +8,7 @@ from audioflow.adapters.wrappers import T5Wrapper, ClapTextWrapper, ConvNeXtWrap
 
 import time
 
+
 class Any2AudioAdapter(nn.Module): 
     def __init__(self, in_dim: int, dim: int, **kwargs):
         super().__init__()
@@ -16,12 +17,22 @@ class Any2AudioAdapter(nn.Module):
         self.clap_text = ClapTextWrapper(dim)
         self.feature_encoder = ConvNeXtWrapper(in_dim, dim)
 
-        # Token duration in seconds (40 ms per token)
-        self.dt = 0.04
+        self.dt = 0.1  # Token duration in seconds (100 ms per token)
 
     def forward(self, data: dict) -> Tensor:
+        r"""
+        b: batch_size
+        l_v: cond_seq_len (value)
+        l_q: target_seq_len (query)
+        d: dim
 
-        device = data["target"].device
+        Args:
+            data: dict
+
+        Returns:
+            controls: dict
+        """
+        device = next(self.parameters()).device
         text = batch_xml_to_text(data["text"])
         prompt = batch_get_xml_attr(data["text"], attr="prompt")
 
@@ -48,7 +59,7 @@ class Any2AudioAdapter(nn.Module):
         in_pos = torch.cat([text_pos, feat_pos], dim=0)  # (l_v,)
         
         tgt_fps = get_single_value(data["target_fps"].tolist())
-        tgt_pos = torch.arange(data["target"].shape[1], device=device) / tgt_fps / self.dt  # (l_q,)
+        tgt_pos = torch.arange(data["target_mask"].shape[1], device=device) / tgt_fps / self.dt  # (l_q,)
 
         # Global embedding
         clap = self.clap_text(prompt)  # (b, 1, d)

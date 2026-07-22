@@ -31,7 +31,7 @@ def create_jsonl(args):
         
         meta = {
             "input": {
-                "text": f"<audio prompt={qa(prompt)}/>",
+                "text": f"<event prompt={qa(prompt)}/>",
                 "feature": {
                     "path": in_meta["path"],
                     "type": in_meta["type"],
@@ -40,7 +40,7 @@ def create_jsonl(args):
                 }
             },
             "target": {
-                "audio": {
+                "latent": {
                     "path": tgt_meta["path"],
                     "type": tgt_meta["type"],
                     "fps": tgt_meta["fps"],

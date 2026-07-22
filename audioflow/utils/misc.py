@@ -35,12 +35,12 @@ def logmel(audio: np.ndarray, sr: float) -> np.ndarray:
     )).T  # (t, f)
 
 
-def check_prompt(text: str) -> bool:
-    try:
-        ElementTree.fromstring(text)
-        return True
-    except ElementTree.ParseError:
-        return False
+# def check_prompt(text: str) -> bool:
+#     try:
+#         ElementTree.fromstring(text)
+#         return True
+#     except ElementTree.ParseError:
+#         return False
 
 
 def get_data_length(path: str) -> int:

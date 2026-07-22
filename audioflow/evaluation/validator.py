@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data._utils.collate import default_collate
 
-from audioflow.datasets import get_dataset
+from audioflow.data.datasets import get_dataset
 from audioflow.decoders.audio import load_decoder as load_audio_decoder
 from audioflow.inference.inference import sample_latent
 from audioflow.solvers import get_solver
@@ -26,39 +26,44 @@ class Validator:
         self.model = model
         self.device = device
 
-        self.dataset = get_dataset(configs["dataset"])
-        self.cfg_scale = configs["solver"]["cfg_scale"]
-        self.solver = get_solver(configs["solver"])
+        self.dataset = get_dataset(configs["data"]["dataset"])
+        self.solver = get_solver(configs["sampling"]["solver"])
+        self.n_valid = self.configs["validation"]["num"]
+        self.cfg_scale = self.configs["sampling"]["cfg"]["scale"]
 
-        self.in_decoder = None
+        self.decode_cond_bool = self.configs["validation"]["decode_condition"]
+        self.decode_out_bool = self.configs["validation"]["decode_output"]
+        self.cond_config = configs["non_text_condition"]["encoder"]
+        self.out_config = configs["target"]["decoder"]
+
+        # Lazy initialization
+        self.cond_decoder = None
         self.out_decoder = None
-
-        self.in_modality = configs["validate"]["decode_input"]
-        self.out_modality = configs["validate"]["decode_output"]
         
     def __call__(self, split: str, out_dir: str) -> None:
 
         Path(out_dir).mkdir(parents=True, exist_ok=True)
 
-        for json_dict in self.configs["validate"][split]:
+        for json_dict in self.configs["data"]["validate"][split]:
             jsonl_path = json_dict["path"]
-            n_valid = json_dict["num"]
-            
             metas = read_jsonl(jsonl_path)
-            indices = np.linspace(0, len(metas) - 1, n_valid, dtype=int)
+            indices = np.linspace(0, len(metas) - 1, self.n_valid, dtype=int)
             metas = [metas[i] for i in indices]
             
             for i in range(len(metas)):
                 meta = metas[i]
 
-                # Lazy initialize decoders
-                if self.in_decoder is None:
-                    if self.in_modality in ["audio"]:
-                        self.in_decoder = load_audio_decoder(meta["input"]["feature"]["type"]).to(self.device)
+                # Lazy initialization
+                if self.decode_cond_bool and (self.cond_decoder is None):
+                    if self.cond_config["modality"] in ["audio"]:
+                        self.cond_decoder = load_audio_decoder(self.cond_config["name"]).to(self.device)
 
-                if self.out_decoder is None:
-                    if self.out_modality in ["audio"]:
-                        self.out_decoder = load_audio_decoder(meta["target"]["latent"]["type"]).to(self.device)
+                if self.decode_out_bool and (self.out_decoder is None):
+                    if self.out_config["name"] == self.cond_config["name"]:
+                        self.out_decoder = self.cond_decoder
+                        
+                    elif self.out_config["modality"] in ["audio"]:
+                        self.out_decoder = load_audio_decoder(self.out_config["name"]).to(self.device)
                 
                 # Get data
                 meta["start_time"] = max(meta["target"]["latent"]["duration"] - self.dataset.clip_dur, 0.) / 2
@@ -67,7 +72,7 @@ class Validator:
                 data = trim_target_latent(data)  # Cut silense
                 data = to_device(data, self.device)
                 
-                x_in = data["input_feature"] if meta["input"].get("feature") else None
+                x_cond = data["input_feature"] if meta["input"].get("feature") else None
                 x_real = data["target"]  # (1, t, d)
 
                 # Generate
@@ -79,19 +84,19 @@ class Validator:
                 name = name[0 : 150]
 
                 # Save results
-                if self.in_decoder is not None:
-                    if self.in_modality in ["audio"]:
-                        audio_in = self.in_decoder.decode(x_in).cpu().numpy()[0]  # (c, l)
-                        self.write_audio(audio_in, path=out_dir / f"{name},in.wav", sr=self.in_decoder.sr)
+                if self.decode_cond_bool:
+                    if self.cond_config["modality"] in ["audio"]:
+                        audio_cond = self.cond_decoder.decode(x_cond).cpu().numpy()[0]  # (c, l)
+                        self.write_audio(audio_cond, path=out_dir / f"{name},cond.wav", sr=self.cond_decoder.sr)
 
-                    elif self.in_modality in ["video"]:
-                        video_in = self.in_decoder.decode(x_in).cpu().numpy()[0]  # (c, l)
+                    elif self.cond_config["modality"] in ["video"]:
+                        video_cond = self.cond_decoder.decode(x_cond).cpu().numpy()[0]  # (c, l)
                 else:
-                    if x_in is not None:
-                        self.write_hdf5(x_in.cpu().numpy()[0], meta["input"]["feature"]["type"], path=out_dir / f"{name},in.h5")
+                    if x_cond is not None:
+                        self.write_hdf5(x_cond.cpu().numpy()[0], meta["input"]["feature"]["type"], path=out_dir / f"{name},cond.h5")
 
-                if self.out_decoder is not None:
-                    if self.out_modality in ["audio"]:
+                if self.decode_out_bool:
+                    if self.out_config["modality"] in ["audio"]:
                         audio_gen = self.out_decoder.decode(x_gen).cpu().numpy()[0]  # (c, l)
                         audio_gt = self.out_decoder.decode(x_real).cpu().numpy()[0]  # (c, l)
                         self.write_audio(audio_gen, path=out_dir / f"{name},gen.wav", sr=self.out_decoder.sr)
@@ -101,24 +106,26 @@ class Validator:
                     self.write_hdf5(x_real.cpu().numpy()[0], meta["target"]["latent"]["type"], path=out_dir / f"{name},gt.h5")
     
                 # Plot
-                fig, axs = plt.subplots(3, 1, figsize=(10, 10))
+                fig, axes = plt.subplots(3, 1, figsize=(10, 10))
+                [axes[i].xaxis.tick_bottom() for i in range(len(axes))]
 
-                if self.in_modality in ["audio"]:
-                    logmel_in = logmel(audio_in, self.out_decoder.sr)
-                    self.plot_logmel(axs[0], logmel_in)
+                if self.decode_cond_bool:
+                    if self.cond_config["modality"] in ["audio"]:
+                        logmel_cond = logmel(audio_cond, self.out_decoder.sr)
+                        self.plot_logmel(axes[0], logmel_cond)
                 else:
-                    axs[0].matshow(x_in.cpu().numpy()[0].T, origin='lower', aspect='auto', cmap='jet')
+                    axes[0].matshow(x_cond.cpu().numpy()[0].T, origin='lower', aspect='auto', cmap='jet')
                     
-                if self.out_modality in ["audio"]:
-                    logmel_gen = logmel(audio_gen, self.out_decoder.sr)
-                    logmel_gt = logmel(audio_gt, self.out_decoder.sr)
-                    self.plot_logmel(axs[1], logmel_gen)
-                    self.plot_logmel(axs[2], logmel_gt)
+                if self.decode_out_bool:
+                    if self.out_config["modality"] in ["audio"]:
+                        logmel_gen = logmel(audio_gen, self.out_decoder.sr)
+                        logmel_gt = logmel(audio_gt, self.out_decoder.sr)
+                        self.plot_logmel(axes[1], logmel_gen)
+                        self.plot_logmel(axes[2], logmel_gt)
 
-                axs[0].set_title("Input")
-                axs[1].set_title("Generation")
-                axs[2].set_title("Ground truth")
-                axs[2].xaxis.tick_bottom()
+                axes[0].set_title("Non-text Condition")
+                axes[1].set_title("Generation")
+                axes[2].set_title("Ground truth")
 
                 out_path = out_dir / f"{name}.png"
                 plt.savefig(out_path)

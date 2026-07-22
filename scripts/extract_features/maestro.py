@@ -6,7 +6,8 @@ import pandas as pd
 import math
 import h5py
 
-from audioflow.encoders.audio import load_encoder
+from audioflow.encoders.audio import load_encoder as load_audio_encoder
+from audioflow.encoders.midi import load_encoder as load_midi_encoder
 from audioflow.utils.audio import extract_and_save_audio_features, load_stereo
 from audioflow.utils.text import write_lines
 from audioflow.utils.midi import read_single_track_midi
@@ -23,7 +24,7 @@ def extract_audio_features(args) -> None:
     out_dir = Path(args.out_dir)
 
     # Load audio encoder
-    encoder = load_encoder(encoder_name).to(device)
+    encoder = load_audio_encoder(encoder_name).to(device)
 
     csv_path = root / "maestro-v3.0.0.csv"
     meta_dict = load_meta(csv_path, split)
@@ -74,7 +75,9 @@ def extract_midi(args) -> None:
     aug_repeats = args.augmentation_repeats
     out_dir = Path(args.out_dir)
     encoder_name = "frame_onset"
-    fps = 100
+    
+    # Load audio encoder
+    encoder = load_midi_encoder(encoder_name)
 
     csv_path = root / "maestro-v3.0.0.csv"
     meta_dict = load_meta(csv_path, split)
@@ -86,45 +89,22 @@ def extract_midi(args) -> None:
 
         # Read MIDI notes
         notes, pedals = read_single_track_midi(path, extend_pedal=True)
+        duration = max([note.end for note in notes])
 
         # Convert notes to roll
-        if encoder_name == "frame_onset":
-            roll = notes_to_piano_roll(notes, fps)  # (t, d)
-        else:
-            raise ValueError(encoder_name)
-
-        duration = max([note.end for note in notes])
+        roll = encoder(notes)  # (t, d)
 
         out_path = out_dir / f"{path.stem}.h5"
         out_path.parent.mkdir(parents=True, exist_ok=True)
 
         with h5py.File(out_path, 'w') as hf:
             hf.create_dataset("data", data=roll, dtype=bool)
-            hf.attrs.create("fps", data=fps, dtype=float)
+            hf.attrs.create("fps", data=encoder.fps, dtype=float)
             hf.attrs.create("duration", data=duration, dtype=float)
             hf.attrs.create("type", data=encoder_name)
 
         print(f"Write out to {out_path} {roll.shape}")
 
-
-def notes_to_piano_roll(notes: list, fps: float) -> np.ndarray:
-
-    duration = max([note.end for note in notes])
-    n_frames = math.ceil(duration * fps)
-
-    frame_roll = np.zeros((n_frames, 128), dtype=bool)
-    onset_roll = np.zeros((n_frames, 128), dtype=bool)
-
-    for note in notes:
-        start = round(note.start * fps)
-        end = round(note.end * fps)
-        pitch = note.pitch
-        velocity = note.velocity
-        frame_roll[start : end + 1, pitch] = True
-        onset_roll[start, pitch] = True
-
-    roll = np.concatenate([frame_roll, onset_roll], axis=-1)  # (l, d)
-    return roll
 
 
 if __name__ == '__main__':

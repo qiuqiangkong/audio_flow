@@ -9,14 +9,14 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 import wandb
-from audioflow.datasets import get_dataset
+from audioflow.data.datasets import get_dataset
 from audioflow.flows import get_flow
 from audioflow.guidance.cfg import cfg_drop
-from audioflow.validate.validator import Validator
+from audioflow.evaluation.validator import Validator
 from audioflow.models import get_model
 from audioflow.optim import get_optimizer_and_scheduler
 from audioflow.optim.ema import update_ema
-from audioflow.samplers import get_batch_sampler
+from audioflow.data.samplers import get_batch_sampler
 from audioflow.utils.torch import (mean, requires_grad, save_checkpoint, to_device, trim_target_latent)
 from audioflow.utils.yaml import read_yaml
 
@@ -28,12 +28,11 @@ def train(args) -> None:
     config_path = Path(args.config)
     wandb_log = not args.no_log
     filename = Path(__file__).stem
+    device = "cuda"
     
     # Configs
     configs = read_yaml(config_path)
-    device = configs["train"]["device"]
-    ckpt_path = configs["train"]["resume_ckpt_path"]
-
+    
     # Checkpoints directory
     config_name = config_path.stem
     ckpts_dir = Path("./checkpoints") / filename / config_name
@@ -43,7 +42,7 @@ def train(args) -> None:
     batch_sampler = get_batch_sampler(configs)
 
     # Dataset
-    train_dataset = get_dataset(configs["dataset"])
+    train_dataset = get_dataset(configs["data"]["dataset"])
 
     # Dataloader
     train_dataloader = DataLoader(
@@ -54,7 +53,10 @@ def train(args) -> None:
     )
 
     # Model
-    model = get_model(configs["model"], ckpt_path).to(device)
+    model = get_model(
+        configs=configs["model"], 
+        ckpt_path=configs["train"]["resume_ckpt_path"]
+    ).to(device)
 
     # EMA
     ema = deepcopy(model).to(device)
@@ -83,9 +85,7 @@ def train(args) -> None:
         # 1.1 CFG drop
         data = cfg_drop(
             data=data, 
-            p_full=configs["cfg"]["p_full"], 
-            p_xml=configs["cfg"]["p_xml"],
-            p_attrib=configs["cfg"]["p_attrib"],
+            dropout_prob=configs["train"]["cfg"]["dropout_prob"], 
         )
 
         # 1.2 Trim data

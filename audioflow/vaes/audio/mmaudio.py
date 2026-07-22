@@ -11,6 +11,108 @@ from mmaudio.model.utils.features_utils import FeaturesUtils
 
 
 class MMAudioVAE(nn.Module):
+    def __init__(self, sr: float) -> None:
+        super().__init__()
+
+        self.sr = sr
+
+        if sr == 16000:
+            name = "16"
+            self.dim = 20
+            self.fps = 31.25  # 16000 / 512
+
+        elif sr == 44100:
+            name = "44"
+            self.dim = 40
+            self.fps = 43.06640625  # 44100 / 1024
+        else:
+            raise ValueError(sr)
+
+        # 16kHz VAE
+        vae_path = hf_hub_download(
+            repo_id="hkchengrex/MMAudio",
+            filename=f"ext_weights/v1-{name}.pth",
+        )
+
+        # 16kHz BigVGAN
+        bigvgan_path = hf_hub_download(
+            repo_id="hkchengrex/MMAudio",
+            filename="ext_weights/best_netG.pt",
+        )
+
+        self.mel_vae = FeaturesUtils(
+            tod_vae_ckpt=vae_path,
+            bigvgan_vocoder_ckpt=bigvgan_path,
+            synchformer_ckpt=None,
+            enable_conditions=False,
+            mode=f"{name}k",
+            need_vae_encoder=True,
+        )
+        
+        self.saveable = False
+        
+    def encode(self, audio: Tensor) -> Tensor:
+        r"""Convert text into VAE latents.
+
+        b: batch_size
+        c: n_channels
+        l: audio_samples
+        d: dim
+        t: time_steps
+
+        Args:
+            audio: (b, 2, l)
+
+        Returns:
+            latent: (b, t, d)
+        """
+
+        # Encode each audio channel independently (mono VAE)
+        x = rearrange(audio, 'b c l -> (b c) l')  # (b*c, l)
+
+        with torch.no_grad():
+            self.mel_vae.eval()
+            p = self.mel_vae.encode_audio(x)
+            z = p.sample()  # (b*c, d, t)
+
+        latent = rearrange(z, '(b c) d t -> b t (c d)', c=audio.shape[1])  # (b, t, c*d)
+        return latent
+
+    def decode(self, latent: Tensor) -> Tensor:
+        r"""
+
+        b: batch_size
+        t: n_frames
+        d: dim
+        c: n_channels
+        l: audio_samples
+        f: mel_bins
+        t': mel_frames
+
+        Args:
+            latent: (b, t, c*d)
+
+        Returns:
+            audio: (b, c, l)
+        """
+
+        # Decode each audio channel independently (mono VAE)
+        x = rearrange(latent, 'b t (c d) -> (b c) t d', d=self.dim)
+
+        with torch.no_grad():
+            self.mel_vae.eval()
+            mel = self.mel_vae.decode(x)  # (b, f, t')
+            audio = self.mel_vae.vocode(mel)  # (b, 1, l)
+
+        audio = rearrange(audio, '(b c) 1 l -> b c l', b=latent.shape[0])
+        return audio
+
+    def __call__(self, audio: Tensor) -> Tensor:
+        return self.encode(audio)
+
+
+'''
+class MMAudioVAE(nn.Module):
 
     def __init__(self, sr: float) -> None:
         super().__init__()
@@ -51,93 +153,6 @@ class MMAudioVAE(nn.Module):
         )
 
         
-        self.saveable = False
-        
-    def encode(self, audio: Tensor) -> Tensor:
-        r"""Convert text into VAE latents.
-
-        b: batch_size
-        c: channels_num
-        l: audio_samples
-        d: dim
-        t: time_steps
-
-        Args:
-            audio: (b, 2, l)
-
-        Returns:
-            latent: (b, t, d)
-        """
-        B, C, L = audio.shape
-        x = audio.mean(dim=1)
-
-        with torch.no_grad():
-            self.mel_vae.eval()
-            p = self.mel_vae.encode_audio(x)
-            z = p.sample()  # (b, d, t)
-
-        latent = rearrange(z, 'b d t -> b t d')
-        return latent
-
-    def decode(self, latent: Tensor) -> Tensor:
-        r"""
-
-        b: batch_size
-        t: n_frames
-        d: dim
-        c: audio_channels
-        l: audio_samples
-        f: mel_bins
-        t': mel_frames
-
-        Args:
-            latent: (b, t, d)
-
-        Returns:
-            audio: (b, c=1, l)
-        """
-
-        with torch.no_grad():
-            self.mel_vae.eval()
-            mel = self.mel_vae.decode(latent)  # (b, f, t')
-            audio = self.mel_vae.vocode(mel)  # (b, c=1, l)
-
-        return audio
-
-    def __call__(self, audio: Tensor) -> Tensor:
-        return self.encode(audio)
-
-
-'''
-class MMAudioVAE(nn.Module):
-
-    def __init__(self, sr: float) -> None:
-        super().__init__()
-
-        # 16kHz VAE
-        vae_path = hf_hub_download(
-            repo_id="hkchengrex/MMAudio",
-            filename="ext_weights/v1-16.pth",
-        )
-
-        # 16kHz BigVGAN
-        bigvgan_path = hf_hub_download(
-            repo_id="hkchengrex/MMAudio",
-            filename="ext_weights/best_netG.pt",
-        )
-
-        self.mel_vae = FeaturesUtils(
-            tod_vae_ckpt=vae_path,
-            bigvgan_vocoder_ckpt=bigvgan_path,
-            synchformer_ckpt=None,
-            enable_conditions=False,
-            mode="16k",
-            need_vae_encoder=True,
-        )
-
-        self.dim = 20
-        self.sr = 16000
-        self.fps = 31.25
         self.saveable = False
         
     def encode(self, audio: Tensor) -> Tensor:

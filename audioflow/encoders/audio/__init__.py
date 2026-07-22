@@ -19,6 +19,10 @@ def load_encoder(name: str) -> nn.Module:
         from audioflow.vaes.audio.mmaudio import MMAudioVAE
         return MMAudioVAE(sr=44100)
 
+    elif name == "kvae":
+        from audioflow.vaes.audio.kvae import KVAE
+        return KVAE()
+
     elif name == "dac":
         from .dac import DAC
         return DAC(n_quantizers=2)

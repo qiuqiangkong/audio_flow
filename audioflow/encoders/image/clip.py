@@ -16,7 +16,7 @@ class CLIPImageEncoder(nn.Module):
         video: (b, h, w, c) uint8 or float
         return: (b, d)
         """
-
+        
         inputs = self.processor(
             images=list(image),
             return_tensors="pt"

@@ -45,7 +45,7 @@ class LevoVAE(nn.Module):
         t: time_steps
 
         Args:
-            audio: (b, 2, l)
+            audio: (b, c=2, l)
 
         Returns:
             latent: (b, t, d)
@@ -64,7 +64,7 @@ class LevoVAE(nn.Module):
             latent: (b, t, d)
 
         Returns:
-            audio: (b, c, l)
+            audio: (b, c=2, l)
         """
 
         latent = rearrange(latent, 'b t d -> b d t')

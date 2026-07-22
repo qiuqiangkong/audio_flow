@@ -1,10 +1,37 @@
 import torch.nn as nn
 
-from .audioflow import AudioFlow
+from audioflow.models.audioflow import AudioFlow
 from audioflow.adapters import get_adapter
 from audioflow.utils.torch import load
 
 
+def get_model(configs: dict, ckpt_path: str) -> nn.Module:
+
+    adapter = get_adapter(configs["adapter"])
+    backbone = get_backbone(configs["backbone"])
+    
+    model = AudioFlow(adapter, backbone)
+
+    if ckpt_path:
+        model = load(model, ckpt_path)
+        print(f"Load checkpoint from {ckpt_path}")
+
+    return model
+
+
+def get_backbone(configs: dict) -> nn.Module:
+    r"""Initialize base."""
+    name = configs["name"]
+
+    if name == "DiT":
+        from .dit import DiT
+        return DiT(**configs)
+
+    else:
+        raise ValueError(name)
+
+
+'''
 def get_model(configs: dict, ckpt_path: str) -> nn.Module:
 
     in_ = get_in(configs["in"])
@@ -39,3 +66,4 @@ def get_base(configs: dict) -> nn.Module:
 
     else:
         raise ValueError(name)
+'''

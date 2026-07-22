@@ -3,9 +3,42 @@ import torch
 from torch import Tensor
 import torch.nn as nn
 from itertools import chain
-# from audioflow.utils.xml import str_to_xml, xml_to_str
 
 
+def cfg_drop(data: dict, dropout_prob=0.1) -> dict:
+    
+    B = len(data["text"])
+
+    for n in range(B):
+        
+        rand = random.random()
+        
+        # Full drop
+        if rand < dropout_prob:
+            update(data, "text", n, "")
+            
+        # Drop xml block
+        # elif p_full <= rand < p_full + p_xml:
+        #     pass
+
+        # elif p_full + p_xml <= rand < p_full + p_xml + p_attrib:
+        #     pass
+        #     p = 0.5
+        #     s = drop_xml(data["text"][n], p)
+        #     update(data, "text", n, s)
+
+            # if random.random() < p:
+            #     update(data, "input_feature", n, 0.)
+            #     update(data, "input_mask", n, False)
+
+        # No drop
+        else:
+            pass
+
+    return data
+
+
+'''
 def cfg_drop(data: dict, p_full=0.1, p_xml=0.1, p_attrib=0.1) -> dict:
     
     B = len(data["text"])
@@ -37,7 +70,7 @@ def cfg_drop(data: dict, p_full=0.1, p_xml=0.1, p_attrib=0.1) -> dict:
             pass
 
     return data
-
+'''
 
 def update(data: dict, key: str, index: int, value) -> None:
     if key in data:
@@ -45,21 +78,17 @@ def update(data: dict, key: str, index: int, value) -> None:
 
 
 def drop_xml(s: str, p: float) -> str:
-    # from IPython import embed; embed(using=False); os._exit(0)
     xml = str_to_xml(s)
     xml = [e for e in xml if random.random() < p]
     return xml_to_str(xml)
-
-
-
 
 
 def cfg_forward(
     model: nn.Module, 
     t: Tensor, 
     x: Tensor, 
-    data_c: dict, 
-    data_u: dict, 
+    data_c: dict,  # condition
+    data_u: dict,  # uncondition
     cfg_scale=4.0
 ) -> Tensor:
 

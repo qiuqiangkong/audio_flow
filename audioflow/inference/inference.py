@@ -25,7 +25,7 @@ def sample_latent(
     
     if cfg_scale:
         data_u = to_device(deepcopy(data), device)
-        data_u = cfg_drop(data_u, p_full=1.0, p_xml=0.0, p_attrib=0.0)
+        data_u = cfg_drop(data_u, dropout_prob=1.0)
 
         fn = partial(
             cfg_forward,  # 6 args: fn(model, t, x, data_c, data_u, cfg_scale)

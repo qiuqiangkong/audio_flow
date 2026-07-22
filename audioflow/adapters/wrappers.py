@@ -6,7 +6,7 @@ from einops import rearrange
 from audioflow.encoders.text.char import CharEncoder
 from audioflow.encoders.text.clap_text import ClapTextEncoder
 from audioflow.encoders.text.flan_t5 import FlanT5
-from audioflow.adapters.convnext import ConvNeXt
+from .layers.convnext import ConvNeXt
 
 
 class T5Wrapper(nn.Module):
