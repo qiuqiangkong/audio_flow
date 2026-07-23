@@ -119,8 +119,27 @@ CUDA_VISIBLE_DEVICES=0 python batch_sample_chunked.py \
 ```
 
 ### 1.7 Evaluate
+The command to run the quality evaluation metric calculation script is as follows:
 ```
 python evaluate_mss_metrics.py --compute_fad --compute_visqol --compute_input_metrics
+```
+
+The command to run the baseline model complexity calculation script is as follows:
+```
+CUDA_VISIBLE_DEVICES=0 python evaluate_complexity.py \
+  --config ./configs/mss/mss_musdb18hq.yaml \
+  --ckpt-path checkpoints/train/mss_musdb18hq/step=1000000_ema.pth \
+  --solver-steps 100 \
+  --device cuda \
+  --json-out complexity_report.json
+```
+or
+```
+python evaluate_complexity.py \
+  --config ./configs/mss/mss_musdb18hq.yaml \
+  --solver-steps 100 \
+  --device cpu \
+  --json-out complexity_report.json
 ```
 
 The validation results of the baseline system are shown below.
@@ -128,9 +147,9 @@ The validation results of the baseline system are shown below.
 | Method | SI-SNR (dB) ↑ | LSD ↓ | FAD ↓ | ViSQOL ↑ | Para. ↓ | MACs ↓
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | Input | -46.91 | 1.91 | 22.70 | 3.37 | - | - |
-| Baseline | -50.50 | 1.71 | 8.90 | 3.45 | 157.38M | 39.02G |
+| Baseline | -50.50 | 1.71 | 8.90 | 3.45 | 550.87M | 4.49T |
 
-Note: The parameter count includes only trainable components and excludes any pretrained modules.
+Note:The reported parameter count and MACs cover the complete end-to-end inference pipeline, including VAE encoding, condition processing, all iterative denoising steps, and VAE/BigVGAN decoding. For 100 solver steps, all 99 denoiser evaluations are included.
 
 ## External links
 
